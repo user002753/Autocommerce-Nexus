@@ -8,3 +8,7 @@
 .guide-steps li{font-size:13px;line-height:1.55;color:#3f3d38}
 .guide-steps li::marker{font-weight:800;color:var(--ink)}
 .guide-steps b{color:var(--ink)}
+/* ---------------- SECTION FLASH (smart navigation) ---------------- */
+.section-flash{animation:sectionGlow 2.4s ease}
+@keyframes sectionGlow{0%{box-shadow:0 0 0 0 rgba(217,255,77,0)}15%{box-shadow:0 0 0 4px rgba(217,255,77,.85)}60%{box-shadow:0 0 0 4px rgba(217,255,77,.5)}100%{box-shadow:0 0 0 0 rgba(217,255,77,0)}}
+html{scroll-padding-top:90px}

@@ -279,6 +279,21 @@ function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// -------------------------------------------------- SMART SECTION NAVIGATION
+// Smooth-scrolls to the section relevant to a finished process and flashes it.
+function scrollToSection(sectionId, label) {
+  const section = gwById(sectionId);
+  if (!section) return;
+  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  section.classList.remove('section-flash');
+  // restart the CSS animation
+  void section.offsetWidth;
+  section.classList.add('section-flash');
+  setTimeout(() => section.classList.remove('section-flash'), 2600);
+  if (label) showToast(label);
+}
+window.scrollToSection = scrollToSection;
+
 async function runCanvasScenario(scenarioType) {
   clearTerminal();
 
@@ -407,6 +422,8 @@ function simPhonePaymentSuccess() {
   showToast('Simulated UPI Payment Success!');
   updateSlaTracker(2);
   refreshLedger();
+  // Smart navigation: order complete — show the post-purchase concierge tracker
+  setTimeout(() => scrollToSection('concierge', 'Order settled! Track dispatch & warranty in the Concierge 📦'), 1000);
 }
 window.simPhonePaymentSuccess = simPhonePaymentSuccess;
 
@@ -449,6 +466,8 @@ gwById('createPolicy').onclick = async () => {
     }]);
     showToast('UPI Reserve Pay mandate token issued securely.');
     refreshLedger();
+    // Smart navigation: mandate is ready — take the user to the AgentPay sandbox to use it
+    setTimeout(() => scrollToSection('concepts', 'Mandate ready! Try the AgentPay prompt below ⚡'), 900);
   } catch (error) {
     showToast(error.message);
   }
@@ -492,6 +511,8 @@ window.testConnector = async (type) => {
     addTrace(res.traces || [{ agent: `${type.toUpperCase()} Connector`, detail: `Status: ${res.status}. Active products count: ${res.products_count}.`, status: 'ok' }]);
     showToast(`${type.toUpperCase()} connector test clean!`);
     refreshLedger();
+    // Smart navigation: connector result lands in the Flight Recorder trace feed
+    setTimeout(() => scrollToSection('recorder', 'Connector trace available in the Flight Recorder'), 700);
   } catch (err) {
     showToast(err.message);
   }
@@ -524,6 +545,8 @@ gwById('applyFailure').onclick = async () => {
     }]);
     showToast('Failure injection matrix armed live on Flight Recorder.');
     refreshLedger();
+    // Smart navigation: faults are armed — show the live recovery feed
+    setTimeout(() => scrollToSection('recorder', 'Recovery matrix armed — repeat a purchase to watch recovery'), 700);
   } catch (error) {
     showToast(error.message);
   }
@@ -602,6 +625,8 @@ gwById('runAgentPrompt').onclick = async () => {
       showExplainabilityModal(res.order_id, res.explainability.reasoning_trace, res.explainability.diff);
       updateConciergeVault(res.order_id, res.lines[0].name);
       updateSlaTracker(1);
+      // Smart navigation: after the modal closes, lead the buyer to their new order tracker
+      setTimeout(() => scrollToSection('concierge', 'Order settled! Track it in the Concierge 📦'), 3200);
     } else if (res.status === 'recovered_stock_race') {
       gwById('agentPromptOutput').textContent = `⚠️ Stock race trapped! Recommended alternative: ${res.alternative.name} (+₹100 inconvenience waiver credit).`;
       showToast('Stock race trapped & recovered!');
@@ -808,6 +833,8 @@ gwById('generateProofCert').onclick = async () => {
     gwById('certOutput').textContent = JSON.stringify(cert, null, 2);
     showToast('Proof-of-Consent Certificate signed!');
     refreshLedger();
+    // Smart navigation: the signed certificate is now on the immutable ledger
+    setTimeout(() => scrollToSection('audit', 'Certificate recorded — verify it in the Proof-of-Intent Ledger 🔐'), 800);
   } catch (error) { showToast(error.message); }
 };
 
@@ -904,6 +931,8 @@ if (gwById('simUpiSuccessBtn')) {
     updateSlaTracker(2);
     addTrace([{ agent: 'Razorpay UPI Engine', detail: `Simulated UPI payment success for ${nexus.activeOrder || 'order'}. Funds released to merchant split accounts via Razorpay Route.`, status: 'ok' }]);
     refreshLedger();
+    // Smart navigation: order is live — take the buyer to the post-purchase concierge
+    setTimeout(() => scrollToSection('concierge', 'Order settled! Track dispatch & warranty in the Concierge 📦'), 800);
   };
 }
 
@@ -1077,6 +1106,8 @@ async function triggerRefund(orderId) {
     showToast('Refund processed to UPI account instantly!');
     updateConciergeVault(orderId, "Refunded Item");
     refreshLedger();
+    // Smart navigation: refund event is signed — show it on the audit ledger
+    setTimeout(() => scrollToSection('audit', 'Refund recorded on the Proof-of-Intent Ledger ↩'), 800);
   } catch (error) { showToast(error.message); }
 }
 window.triggerRefund = triggerRefund;

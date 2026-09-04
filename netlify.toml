@@ -1,0 +1,19 @@
+# Netlify static hosting for AutoCommerce Nexus (frontend demo mode)
+# The Python FastAPI backend is not hosted here; the UI automatically
+# falls back to built-in Demo Sandbox Mode (mockGateway) when the API
+# is unreachable, so every simulation still works.
+
+[build]
+  publish = "."
+  command = "echo 'Static deploy — no build step required'"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+
+# Keep direct visits to /index.html canonical
+[[redirects]]
+  from = "/home"
+  to = "/"
+  status = 301
